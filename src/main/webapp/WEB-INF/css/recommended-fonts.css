@@ -1,0 +1,53 @@
+.recommended {
+    display: inline-block;
+    vertical-align: text-top;
+    padding-left: 2px;
+    font-size: 10px;
+    color: steelblue;
+    text-shadow: 1px 1px 1px lightgray;
+}
+
+#input-width {
+    white-space: pre;
+    padding: 1px;
+    margin: 1px;
+}
+
+button:after {
+    content: '下架';
+}
+
+tr[data-onoff=false] * {
+    color:darkgrey;
+}
+tr[data-onoff=false] button:after {
+    content: '上架';
+}
+
+input {
+    border: solid steelblue 1px;
+    padding: 0;
+    background-color: inherit;
+
+}
+
+input:read-only {
+    border: 0;
+    padding: 0;
+    background-color: inherit;
+}
+
+th:first-child, td:first-child {
+    text-align: justify;
+}
+
+input[type=number] {
+    text-align: right;
+    width: 66px;
+}
+
+
+
+
+
+
