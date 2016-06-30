@@ -4,8 +4,6 @@
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-webmvc-portlet/4.2.4.RELEASE/aa40743f15d5381d5c8b442586199ee118dd9d81/spring-webmvc-portlet-4.2.4.RELEASE.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-webmvc-portlet/4.2.4.RELEASE/97807c7f2e6846a9aab8569acb5f36f2e994faed/spring-webmvc-portlet-4.2.4.RELEASE-sources.jar!/" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>

@@ -26,4 +26,7 @@ public interface DishMapper {
     @Update("update menu set onoff=#{0} where id=#{1}")
     int updateOnoff(int onoff,int id);
 
+    @Insert("insert into menu values()")
+    @Options(useGeneratedKeys = true)
+    int insertNewdish(Dish dish);
 }

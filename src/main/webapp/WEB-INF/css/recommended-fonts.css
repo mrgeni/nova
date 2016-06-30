@@ -13,13 +13,14 @@
     margin: 1px;
 }
 
-button:after {
+tr[data-onoff=true] button:after {
     content: '下架';
 }
 
 tr[data-onoff=false] * {
-    color:darkgrey;
+    color: darkgrey;
 }
+
 tr[data-onoff=false] button:after {
     content: '上架';
 }

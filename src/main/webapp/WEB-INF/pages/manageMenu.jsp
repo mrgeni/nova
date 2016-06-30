@@ -27,9 +27,11 @@
 <body>
 <div id="input-width" hidden></div>
 <div class="container">
-    <h1 class="text-center">
-        <strong>菜单</strong>
-    </h1>
+    <h2 class="text-center">
+        菜单 <a id="add-dish" style="font-size:20px">
+        <small>添加</small>
+    </a>
+    </h2>
     <table id="table" class="table table-condensed   text-center">
         <%--<tr>
             <td>果汁</td>

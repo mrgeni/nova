@@ -6,11 +6,17 @@
     /*设置表的标题栏*/
     var trs = "<tr><th><div class='col-xs-2'></div>菜名</th><th class='text-center'>价格</th><th class='text-center'><a href='#'>管理</a></th></tr>";
     var $div = $('#input-width');
+    var disable = {true: '', false: 'disabled'};
+    $('#add-dish').on('click', function () {
+        $.get("/add-dish", function (i) {
+            $('tbody').append($("<tr data-id=" + i + " data-onoff='true'><td class='col-xs-6'><div class='col-xs-2'></div><input " + disable[true] + " maxlength='20' readonly='true'data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html('菜名').outerWidth(true) + "px' value='菜名'/><span class='recommended'><strong></strong></span></td><td><input type='number' " + disable[true] + " readonly='true'data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='0.00'/></td><td><button class='btn btn-default btn-sm'></button></td></tr>"));
+        })
+    })
     /*AJAX异步读取URL:/getmenu处的后台数据*/
     $.get("/getmenu", function (Menu) {
-        var disable={true:'',false:'disabled'};
+        /*var disable = {true: '', false: 'disabled'};*/
         for (var i in Menu) {
-            trs += "<tr data-id=" + Menu[i].id + " data-onoff=" + Menu[i].onoff + "><td class='col-xs-6'><div class='col-xs-2'></div><input "+ disable[Menu[i].onoff] +" maxlength='20' readonly='true'data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html(Menu[i].dishname).outerWidth(true) + "px' value='" + Menu[i].dishname + "'/><span class='recommended'><strong>" + Menu[i].recommended + "</strong></span></td><td><input type='number' "+ disable[Menu[i].onoff] +" readonly='true'data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='" + Menu[i].price.toFixed(2) + "'/></td><td><button class='btn btn-default btn-sm'></button></td></tr>";
+            trs += "<tr data-id=" + Menu[i].id + " data-onoff=" + Menu[i].onoff + "><td class='col-xs-6'><div class='col-xs-2'></div><input " + disable[Menu[i].onoff] + " maxlength='20' readonly='true'data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html(Menu[i].dishname).outerWidth(true) + "px' value='" + Menu[i].dishname + "'/><span class='recommended'><strong>" + Menu[i].recommended + "</strong></span></td><td><input type='number' " + disable[Menu[i].onoff] + " readonly='true'data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='" + Menu[i].price.toFixed(2) + "'/></td><td><button class='btn btn-default btn-sm'></button></td></tr>";
         }
         table.innerHTML = trs;
         $("input").tooltip();
@@ -19,68 +25,68 @@
         var inputvalue;
         var illegal;
         /*单击设置推荐菜*/
-        $('tr').on('click', function (e) {
-                $tr = $(this);
-                switch (e.target.nodeName) {
-                    case 'TD':
-                        if (!$tr.find('input:disabled').length) {
-                            var $recommend = $tr.find('strong');
-                            if ($recommend.text()) {
-                                $recommend.text('');
-                            } else {
-                                $recommend.text('推荐');
-                            }
-                            /*同步数据库menu表,recommended字段*/
-                            $.post("/postrecommended", {'recommended': $recommend.text(), 'id': $tr.data('id')});
+        $('tbody').on('click', 'tr', function (e) {
+            $tr = $(this);
+            switch (e.target.nodeName) {
+                case 'TD':
+                    if (!$tr.find('input:disabled').length) {
+                        var $recommend = $tr.find('strong');
+                        if ($recommend.text()) {
+                            $recommend.text('');
+                        } else {
+                            $recommend.text('推荐');
                         }
-                        break;
-                    case 'INPUT':
-                        $this = $(e.target);
-                        if ($this.attr('readonly') && $this.is(':focus')) {
-                            $this.attr('readonly', false);
-                            $this.css('background-color', 'azure');
-                            inputvalue = $this.val();
-                            $this.attr('name', inputvalue);
-                            $this.tooltip('destroy');
-                        }
-                        break;
-                    case 'BUTTON':
+                        /*同步数据库menu表,recommended字段*/
+                        $.post("/postrecommended", {'recommended': $recommend.text(), 'id': $tr.data('id')});
+                    }
+                    break;
+                case 'INPUT':
+                    $this = $(e.target);
+                    if ($this.attr('readonly') && $this.is(':focus')) {
+                        $this.attr('readonly', false);
+                        $this.css('background-color', 'azure');
+                        inputvalue = $this.val();
+                        $this.attr('name', inputvalue);
+                        $this.tooltip('destroy');
+                    }
+                    break;
+                case 'BUTTON':
 
-                        if (!$("input[aria-describedby]").length) {
-                            if ($tr.attr('data-onoff') == 'true') {
-                                $tr.attr('data-onoff', 'false');
-                                $tr.find('input').prop('disabled', true);
-                                $.post("/postonoff", {'onoff': 0, 'id': $tr.data('id')});
-                            } else {
-                                $tr.attr('data-onoff', 'true');
-                                $tr.find('input').prop('disabled', false);
-                                $.post("/postonoff", {'onoff': 1, 'id': $tr.data('id')});
-                            }
+                    if (!$("input[aria-describedby]").length) {
+                        if ($tr.attr('data-onoff') == 'true') {
+                            $tr.attr('data-onoff', 'false');
+                            $tr.find('input').prop('disabled', true);
+                            $.post("/postonoff", {'onoff': 0, 'id': $tr.data('id')});
+                        } else {
+                            $tr.attr('data-onoff', 'true');
+                            $tr.find('input').prop('disabled', false);
+                            $.post("/postonoff", {'onoff': 1, 'id': $tr.data('id')});
                         }
-                        break;
-                }
-                /*   if (e.target.nodeName != 'INPUT') {
-                 $tr = $(this);
-                 var $recommend = $tr.find('strong');
-                 if ($recommend.text()) {
-                 $recommend.text('');
-                 } else {
-                 $recommend.text('推荐');
-                 }
-                 /!*同步数据库menu表,recommended字段*!/
-                 $.post("/postrecommended", {'recommended': $recommend.text(), 'id': $tr.data('id')});
+                    }
+                    break;
+            }
+            /*   if (e.target.nodeName != 'INPUT') {
+             $tr = $(this);
+             var $recommend = $tr.find('strong');
+             if ($recommend.text()) {
+             $recommend.text('');
+             } else {
+             $recommend.text('推荐');
+             }
+             /!*同步数据库menu表,recommended字段*!/
+             $.post("/postrecommended", {'recommended': $recommend.text(), 'id': $tr.data('id')});
 
-                 } else {
-                 $this = $(e.target);
-                 if ($this.attr('readonly') && $this.is(':focus')) {
-                 $this.attr('readonly', false);
-                 $this.css('background-color', 'azure');
-                 inputvalue = $this.val();
-                 $this.attr('name', inputvalue);
-                 $this.tooltip('destroy');
-                 }
-                 }*/
-            })
+             } else {
+             $this = $(e.target);
+             if ($this.attr('readonly') && $this.is(':focus')) {
+             $this.attr('readonly', false);
+             $this.css('background-color', 'azure');
+             inputvalue = $this.val();
+             $this.attr('name', inputvalue);
+             $this.tooltip('destroy');
+             }
+             }*/
+        })
             .on({
                 'input': function () {
                     inputvalue = this.value;
@@ -144,5 +150,7 @@
             }
         }
     });
+
+
 }());
 

@@ -35,4 +35,9 @@ public class DishServiceImpl implements DishService {
     public int updateOnoff(int onoff, int id) {
         return this.dishMapper.updateOnoff(onoff, id);
     }
+
+    public int insertNewdish(Dish dish) {
+        this.dishMapper.insertNewdish(dish);
+        return dish.getId();
+    }
 }

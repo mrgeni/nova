@@ -1,15 +1,17 @@
-group 'com.nova'
-version '1.0-SNAPSHOT'
-
 apply plugin: 'java'
 apply plugin: 'war'
+apply plugin: 'idea'
 
-
-
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
 
 repositories {
-    mavenLocal()
-    mavenCentral()
+    /*  mavenLocal()
+      mavenCentral()*/
+    maven { url 'http://maven.oschina.net/content/groups/public/' }
 
 }
 dependencies {
@@ -19,7 +21,7 @@ dependencies {
             'javax.servlet:servlet-api:2.5',
             'javax.servlet.jsp:jsp-api:2.2',
             'org.json:json:20151123',
-            'mysql:mysql-connector-java:5.1.38',
+            'mysql:mysql-connector-java:5.1.39',
             'org.springframework:spring-core:4.2.4.RELEASE',
             'org.springframework:spring-context:4.2.4.RELEASE',
             'org.springframework:spring-test:4.2.4.RELEASE',
@@ -49,4 +51,3 @@ dependencies {
     )
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
-

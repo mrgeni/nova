@@ -13,4 +13,5 @@ public interface DishService {
     int updateDishname(String dishname,int id);
     int updatePrice(float price,int id);
     int updateOnoff(int onoff,int id);
+    int insertNewdish(Dish dish);
 }

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
-
 import java.util.List;
 
 /**
@@ -81,6 +80,11 @@ public class MainController {
         dishService.updateOnoff(onoff, id);
     }
 
+    @RequestMapping(value = "/add-dish", method = RequestMethod.GET)
+    @ResponseBody
+    public int insertNewdish() {
+        return dishService.insertNewdish(new Dish());
+    }
 
 
     /*未登录时，地址栏输入URL:/submit,直接转跳首页,即登录页面*/
