@@ -7,13 +7,18 @@
     text-shadow: 1px 1px 1px lightgray;
 }
 
+
 #input-width {
     white-space: pre;
     padding: 1px;
     margin: 1px;
 }
+p{
+    color: black;
+    display: none;
+}
 
-tr[data-onoff=true] button:after {
+tr[data-onoff=true ] button:after {
     content: '下架';
 }
 
@@ -23,6 +28,28 @@ tr[data-onoff=false] * {
 
 tr[data-onoff=false] button:after {
     content: '上架';
+}
+
+tr[data-delete='1'] button:after{
+    content:'取消';
+    color: darkgray;
+}
+tr[data-delete='1'] span{
+    color:red;
+    text-decoration: line-through;
+}
+tr[data-delete='1'] input{
+   display: none;
+}
+
+tr[data-delete='1'] p{
+    display: inherit;
+
+}
+
+tr[data-delete= '0'] button:after{
+    content:'保留';
+    color:white;
 }
 
 input {

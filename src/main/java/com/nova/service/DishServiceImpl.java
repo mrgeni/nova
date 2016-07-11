@@ -40,4 +40,6 @@ public class DishServiceImpl implements DishService {
         this.dishMapper.insertNewdish(dish);
         return dish.getId();
     }
+
+    public int deleteDish(String ids){ return this.dishMapper.deleteDish(ids);}
 }

@@ -29,4 +29,7 @@ public interface DishMapper {
     @Insert("insert into menu values()")
     @Options(useGeneratedKeys = true)
     int insertNewdish(Dish dish);
+
+    @Delete("delete from menu where id in (${value})")
+    int deleteDish(String ids);
 }

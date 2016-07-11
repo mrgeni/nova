@@ -58,32 +58,45 @@ public class MainController {
 
     /*前台同步数据库menu表,recommended字段*/
     @RequestMapping(value = "/postrecommended", method = RequestMethod.POST)
+    @ResponseBody
     public void postRecommended(@RequestParam String recommended, @RequestParam int id) {
         dishService.updateRecommended(recommended, id);
     }
 
     /*前台同步数据库menu表,dishname字段*/
     @RequestMapping(value = "/postdishname", method = RequestMethod.POST)
+    @ResponseBody
     public void postDishname(@RequestParam("details") String dishname, @RequestParam int id) {
         dishService.updateDishname(dishname, id);
     }
 
     /*前台同步数据库menu表,price字段*/
     @RequestMapping(value = "/postprice", method = RequestMethod.POST)
+    @ResponseBody
     public void postPrice(@RequestParam("details") float price, @RequestParam int id) {
         dishService.updatePrice(price, id);
     }
 
     /*前台同步数据库menu表,onoff字段*/
     @RequestMapping(value = "/postonoff", method = RequestMethod.POST)
+    @ResponseBody
     public void postOnoff(@RequestParam int onoff, @RequestParam int id) {
         dishService.updateOnoff(onoff, id);
     }
 
+    /*menu表,插入新的菜品记录*/
     @RequestMapping(value = "/add-dish", method = RequestMethod.GET)
     @ResponseBody
     public int insertNewdish() {
         return dishService.insertNewdish(new Dish());
+    }
+
+    /*menu表,删除菜品*/
+    @RequestMapping(value = "/postdelete", method = RequestMethod.POST)
+    @ResponseBody
+    public void postDelete(String ids) {
+        dishService.deleteDish(ids);
+
     }
 
 
