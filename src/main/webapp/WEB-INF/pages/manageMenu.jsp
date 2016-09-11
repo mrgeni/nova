@@ -27,12 +27,47 @@
 <body>
 <div id="input-width" hidden></div>
 <div class="container">
-    <h2 class="text-center">
-        菜单 <a id="add-dish" style="font-size:20px">
-        <small>添加</small>
-    </a>
-    </h2>
-    <table id="table" class="table table-condensed   text-center">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#navbar-collapse" aria-expanded="false">
+                    <span class="sr-only"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a id="edit-type" class="navbar-brand" href="#">菜单</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar-collapse">
+                <ul class="nav navbar-nav margin-vertical-zero">
+                    <%--<li class="active"><a href="#">肉类</a></li>
+                    <li><a href="#">蔬菜</a></li>
+                    <li><a href="#">汤类</a></li>
+                    <li><a href="#">点心 饮料</a></li>
+                    <li><a href="#"><input/></a></li>--%>
+                </ul>
+                <ul class="nav navbar-nav navbar-right margin-vertical-zero">
+                    <li value="0"><a href="#" title="添加菜品"><span id="add-dish" class="glyphicon glyphicon-plus-sign"
+                                                                 aria-hidden="true"></span></a>
+                    </li>
+                    <li value="0"><a href="#" title="删除菜品"><span id="delete-dish" class="glyphicon glyphicon-minus-sign"
+                                                                 aria-hidden="true"></span></a></li>
+                    <li value="1"><a href="#" title="添加种类"><span id="add-type" class="glyphicon glyphicon-plus"
+                                                                 aria-hidden="true"></span></a>
+                    </li>
+                    <li value="1"><a href="#" title="删除种类"><span id="delete-type"
+                                                                 class="glyphicon glyphicon glyphicon-minus"
+                                                                 aria-hidden="true"></span></a></li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <table class="table table-condensed   text-center">
+        <tbody></tbody>
         <%--<tr>
             <td>果汁</td>
             <td>12.00</td>
@@ -71,7 +106,6 @@
             </tr>
         </c:forEach>--%>
     </table>
-
 </div>
 <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
 <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>

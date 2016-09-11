@@ -1,9 +1,11 @@
 package com.nova.controller;
 
 import com.nova.model.Dish;
+import com.nova.model.DishType;
 import com.nova.model.Manager;
 import com.nova.model.User;
 import com.nova.service.DishService;
+import com.nova.service.DishTypeService;
 import com.nova.service.ManagerService;
 import com.nova.service.UserService;
 
@@ -30,6 +32,8 @@ public class MainController {
     @Autowired
     private DishService dishService;
     @Autowired
+    private DishTypeService dishTypeService;
+    @Autowired
     private ManagerService managerService;
 
 //    @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -49,11 +53,39 @@ public class MainController {
         return "manageMenu";
     }
 
-    /*读取数据库，发送menu表内查询到的记录*/
-    @RequestMapping(value = "/getmenu", method = RequestMethod.GET)
+    /*读取数据库，发送dish_type表内查询到的菜品种类*/
+    @RequestMapping(value = "/getdishtype", method = RequestMethod.GET)
     @ResponseBody
-    public List<Dish> menu() {
-        return dishService.getMenu();
+    public List<DishType> type() {
+        return dishTypeService.getDishtype();
+    }
+
+    /*前台同步数据库dish_type表,type字段*/
+    @RequestMapping(value = "/postdishtype", method = RequestMethod.POST)
+    @ResponseBody
+    public void postDishtype(@RequestParam String type, @RequestParam int id) {
+        dishTypeService.updateDishtype(type, id);
+    }
+
+    /*dish_type表,插入新的菜类记录*/
+    @RequestMapping(value = "/add-type", method = RequestMethod.GET)
+    @ResponseBody
+    public int insertNewtype() {
+        return dishTypeService.insertNewtype(new DishType());
+    }
+
+    @RequestMapping(value = "/postdeletetype", method = RequestMethod.POST)
+    @ResponseBody
+    public void postDeletedishtype(int id) {
+        dishTypeService.deleteDishtype(id);
+    }
+
+
+    /*读取数据库，发送menu表内查询到的记录*/
+    @RequestMapping(value = "/getmenu", method = RequestMethod.POST)
+    @ResponseBody
+    public List<Dish> menu(int type) {
+        return dishService.getMenu(type);
     }
 
     /*前台同步数据库menu表,recommended字段*/
@@ -85,10 +117,10 @@ public class MainController {
     }
 
     /*menu表,插入新的菜品记录*/
-    @RequestMapping(value = "/add-dish", method = RequestMethod.GET)
+    @RequestMapping(value = "/add-dish", method = RequestMethod.POST)
     @ResponseBody
-    public int insertNewdish() {
-        return dishService.insertNewdish(new Dish());
+    public int insertNewdish(int type) {
+        return dishService.insertNewdish(new Dish(type));
     }
 
     /*menu表,删除菜品*/

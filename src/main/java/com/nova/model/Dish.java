@@ -6,11 +6,19 @@ package com.nova.model;
 public class Dish {
     private int id;
     private String dishname;
+    private int type;
     private float price;
     private String recommended;
     private int sales;
     private String release;
     private boolean onoff;
+
+    public Dish() {
+    }
+
+    public Dish(int type) {
+        this.type = type;
+    }
 
     public int getId() {
         return id;
@@ -26,6 +34,14 @@ public class Dish {
 
     public void setDishname(String dishname) {
         this.dishname = dishname;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public float getPrice() {

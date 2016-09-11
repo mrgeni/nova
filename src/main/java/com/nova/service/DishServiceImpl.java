@@ -14,10 +14,11 @@ import java.util.List;
 @Service
 public class DishServiceImpl implements DishService {
     @Autowired
+
     private DishMapper dishMapper;
 
-    public List<Dish> getMenu() {
-        return this.dishMapper.getMenu();
+    public List<Dish> getMenu(int type) {
+        return this.dishMapper.getMenu(type);
     }
 
     public int updateRecommended(String recommended, int id) {
@@ -41,5 +42,7 @@ public class DishServiceImpl implements DishService {
         return dish.getId();
     }
 
-    public int deleteDish(String ids){ return this.dishMapper.deleteDish(ids);}
+    public int deleteDish(String ids) {
+        return this.dishMapper.deleteDish(ids);
+    }
 }

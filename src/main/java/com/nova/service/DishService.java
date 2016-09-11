@@ -8,7 +8,8 @@ import java.util.List;
  * Created by Go on 2016/3/20.
  */
 public interface DishService {
-    List<Dish> getMenu();
+
+    List<Dish> getMenu(int type);
 
     int updateRecommended(String recommended, int id);
 

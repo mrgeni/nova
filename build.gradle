@@ -9,10 +9,8 @@ idea {
 }
 
 repositories {
-    /*  mavenLocal()
-      mavenCentral()*/
-    maven { url 'http://maven.oschina.net/content/groups/public/' }
-
+    mavenLocal()
+    mavenCentral()
 }
 dependencies {
     compile(
