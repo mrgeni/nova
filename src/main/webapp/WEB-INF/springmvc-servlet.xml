@@ -27,6 +27,8 @@
     <mvc:resources mapping="/js/**" location="/WEB-INF/js/"/>
     <!-- css文件访问路径 -->
     <mvc:resources mapping="/css/**" location="/WEB-INF/css/"/>
+    <!-- img文件访问路径 -->
+    <mvc:resources mapping="/img/**" location="/WEB-INF/img/"/>
 
     <!-- 配置拦截器 -->
     <mvc:interceptors>
@@ -86,4 +88,12 @@
         <property name="suffix" value=".jsp"/>
 
     </bean>
+
+   <!-- 配置文件上传解析器 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 最大上传500KB文件 -->
+        <property name="maxUploadSize" value="512000"/>
+        <property name="defaultEncoding" value="utf-8"/>
+    </bean>
+
 </beans>

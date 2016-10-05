@@ -12,11 +12,13 @@
     padding: 1px;
     margin: 1px;
 }
-.margin-vertical-zero{
+
+.margin-vertical-zero {
     margin-top: 0;
     margin-bottom: 0;
 }
-body{
+
+body {
     padding-top: 100px;
 }
 
@@ -27,7 +29,7 @@ span p {
     padding-right: 4px;
 }
 
-#navbar-collapse li[value='1']{
+#navbar-collapse li[value='1'] {
     display: none;
 
 }
@@ -89,8 +91,15 @@ input[type=number] {
     width: 60px;
 }
 
+input[type=file] {
+    display: none;
+}
 
+/*
 
-
-
+#dish-img {
+    text-align: center;
+    overflow: auto;
+}
+*/
 

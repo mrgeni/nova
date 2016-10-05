@@ -33,6 +33,10 @@ public class DishServiceImpl implements DishService {
         return this.dishMapper.updatePrice(price, id);
     }
 
+    public int updateImg(String img, int id) {
+        return this.dishMapper.updateImg(img, id);
+    }
+
     public int updateOnoff(int onoff, int id) {
         return this.dishMapper.updateOnoff(onoff, id);
     }

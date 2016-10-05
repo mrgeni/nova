@@ -7,8 +7,10 @@
     var trs;
     /* var trs = "<tr><th><div class='col-xs-2'></div>菜名</th><th class='text-center'>价格</th><th class='text-center'>状态</th></tr>";*/
     var $div = $('#input-width');
+    var $modal = $('#modal');
     var disable = {true: '', false: 'disabled'};
     var editable = true;
+
     $('nav')
     /*编辑菜品种类按钮*/
         .on('click', '#edit-type', function () {
@@ -35,21 +37,22 @@
                 var active = document.getElementById('navbar-collapse').getElementsByClassName('active')[0];
                 if (active) {
                     $.post("/add-dish", {type: active.id}, function (i) {
-                        $('tbody').append($("<tr data-id=" + i + " data-onoff='true'><td class='col-xs-6'><div class='col-xs-2'></div><span><p></p><input maxlength='20' readonly='true' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html('新菜名').outerWidth(true) + "px' value='新菜品'/><strong class='recommended'></strong></span></td><td><span><p></p><input type='number' readonly='true' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='0.00'/></span></td><td><button class='btn btn-default btn-sm'></button></td></tr>"));
-                        $("input").tooltip();
+                        $('tbody').append($("<tr data-id=" + i + " data-onoff='true'><td class='col-xs-6'><div class='col-xs-2'></div><span><p></p><input maxlength='20' readonly='true' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html('新菜名').outerWidth(true) + "px' value='新菜品'/><strong class='recommended'></strong></span></td><td><span><p></p><input type='number' readonly='true' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='0.00'/></span></td><td><a href='#'>无</a></td><td><button class='btn btn-default btn-sm'></button></td></tr>"));
+                        $('input').tooltip();
                     });
                 }
                 else {
-                    alert('必须新建或者选择一个菜类!');
+                    modal('错误', '必须新建或者选择一个菜类!');
                 }
             }
         })
         /*删除菜品按钮*/
         .on('click', '#delete-dish', function () {
             var $tr = $('tr');
-            var $button = $('button');
+            var $button = $('tr button');
             if (this.className == 'glyphicon glyphicon-minus-sign' && !$('input[aria-describedby]').length) {
                 this.className = 'glyphicon glyphicon-ok-sign';
+                $('input').tooltip('destroy');
                 $tr.attr('data-delete', 0);
                 $button.addClass('btn-primary');
                 editable = false;
@@ -63,6 +66,7 @@
                 if (ids.length) {
                     $.post("/postdelete", {ids: ids.toString()});
                 }
+                $('input').tooltip();
                 $tr.removeAttr('data-delete');
                 $button.removeClass('btn-primary');
                 editable = true;
@@ -107,7 +111,7 @@
                     });
                 }
                 else {
-                    alert('菜类超过最大数量8种!');
+                    modal('错误', '菜类超过最大数量8种!');
                 }
             }
         })
@@ -115,17 +119,18 @@
         .on('click', '#delete-type', function () {
             if (editable) {
                 var active = document.getElementById('navbar-collapse').getElementsByClassName('active')[0];
-                if (active && confirm('确定删除 ' + active.children[0].text + '?')) {
-                    $.post("/postdeletetype", {id: active.id});
-                    var ul = active.parentNode;
-                    ul.removeChild(active);
-                    $('tbody').html('');
-                    if (ul.children.length) {
-                        ul.children[0].className = 'active';
-                        displaytbody(ul.children[0].id);
+                modal('警告', '确定删除' + active.children[0].text + '?', delete_type, active);
+                /*if (active && confirm('确定删除 ' + active.children[0].text + '?')) {
+                 $.post("/postdeletetype", {id: active.id});
+                 var ul = active.parentNode;
+                 ul.removeChild(active);
+                 $('tbody').html('');
+                 if (ul.children.length) {
+                 ul.children[0].className = 'active';
+                 displaytbody(ul.children[0].id);
 
-                    }
-                }
+                 }
+                 }*/
             }
         })
         .on({
@@ -145,6 +150,39 @@
             }
         }, 'input[style]');
 
+    /*通用提示框*/
+    function modal(title, body, callback, arg, style) {
+        document.getElementById('modallabel').innerHTML = "<strong>" + title + "</strong>";
+        document.getElementsByClassName('modal-body')[0].innerHTML = body;
+        document.getElementById('modalstyle').className = 'modal-dialog' + (style ? style : ' modal-sm');
+        var cancel = document.getElementsByClassName('modal-footer')[0].children[0];
+        var $confirm = $('.modal-footer button:last');
+        $confirm.off('click');
+        if (callback) {
+            cancel.style.display = 'inline';
+            $confirm.on('click', function () {
+                arg ? callback(arg) : callback();
+            });
+        } else {
+            cancel.style.display = 'none';
+            arg && $modal.data('arg', arg);
+        }
+        $modal.modal();
+    }
+
+    /*删除菜类核心函数*/
+    function delete_type(active) {
+        $.post("/postdeletetype", {id: active.id});
+        var ul = active.parentNode;
+        ul.removeChild(active);
+        $('tbody').html('');
+        if (ul.children.length) {
+            ul.children[0].className = 'active';
+            displaytbody(ul.children[0].id);
+        }
+
+    }
+
     /*   .on('click', '#navbar-collapse,div.navbar-header', function (e) {
 
      if (e.target.nodeName == 'DIV') {
@@ -159,16 +197,26 @@
      }
      });*/
 
+    /*判断菜品是否下架或者是否处于 添加/删除-菜品 界面*/
+    function dishoffordeleting(tr_dataset) {
+        return !!(tr_dataset.onoff == 'false' || tr_dataset.delete);
+    }
+
+
     /*菜单生成通用函数*/
     function displaytbody(type, init, edit_type) {
         $.post("/getmenu", {type: type}, function (Menu) {
-            trs = "<tr><th><div class='col-xs-2'></div>菜名</th><th class='text-center'>价格</th><th class='text-center'>状态</th></tr>";
+            trs = "<tr><th><div class='col-xs-2'></div>菜名</th><th class='text-center'>价格</th><th class='text-center'>图片</th><th class='text-center'>状态</th></tr>";
             for (var i in Menu) {
-                trs += "<tr data-id=" + Menu[i].id + " data-onoff=" + Menu[i].onoff + " ><td class='col-xs-6'><div class='col-xs-2'></div><span><p></p><input " + disable[Menu[i].onoff] + " maxlength='20' readonly='true' name='' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html(Menu[i].dishname).outerWidth(true) + "px' value='" + Menu[i].dishname + "'/><strong class='recommended'>" + Menu[i].recommended + "</strong></span></td><td><span><p></p><input type='number' " + disable[Menu[i].onoff] + " readonly='true' name='' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='" + Menu[i].price.toFixed(2) + "'/></span></td><td><button class='btn btn-default btn-sm'></button></td></tr>";
+                trs += "<tr data-id=" + Menu[i].id + " data-onoff=" + Menu[i].onoff + " ><td class='col-xs-6'><div class='col-xs-2'></div><span><p></p><input " + disable[Menu[i].onoff] + " maxlength='20' readonly='true' name='' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html(Menu[i].dishname).outerWidth(true) + "px' value='" + Menu[i].dishname + "'/><strong class='recommended'>" + Menu[i].recommended + "</strong></span></td><td><span><p></p><input type='number' " + disable[Menu[i].onoff] + " readonly='true' name='' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='" + Menu[i].price.toFixed(2) + "'/></span></td><td><a href='#'>" + Menu[i].img + "</a></td><td><button class='btn btn-default btn-sm'></button></td></tr>";
             }
             $('tbody').html(trs);
             init && init();
-            !edit_type || edit_type == '确认' ? $('tr input,tr button').prop('disabled', true) : $("input").tooltip();
+            if (edit_type && edit_type == '确认') {
+                $('tr input,tr button').prop('disabled', true);
+            } else {
+                $('input').tooltip();
+            }
         });
     }
 
@@ -220,7 +268,7 @@
                     break;
                 case 'BUTTON':
 
-                    if (!$("input[aria-describedby]").length) {
+                    if (!$('input[aria-describedby]').length) {
                         if ($tr.attr('data-onoff') == 'true') {
                             $tr.attr('data-onoff', 'false');
                             $tr.find('input').prop('disabled', true);
@@ -231,7 +279,6 @@
                             $.post("/postonoff", {'onoff': 1, 'id': $tr.data('id')});
                         }
                     }
-
                     break;
             }
             /*   if (e.target.nodeName != 'INPUT') {
@@ -256,6 +303,44 @@
              }
              }*/
         })
+            .on('click', 'a', function () {
+                    var tr = this.parentNode.parentNode;
+                    if ($('input[aria-describedby]').length || document.getElementById('edit-type').innerHTML == '确认' || dishoffordeleting(tr.dataset)) {
+                        return false;
+                    } else {
+                        var title = tr.getElementsByTagName('input')[0].value;
+                        var body = "<div id='dish-img'  class='thumbnail'><img src='/img/" + this.innerHTML + "?" + new Date().getTime() + "'><p class='text-right'><strong></strong></p><p class='text-right'><em>" + this.innerHTML + "</em> <a href='#'>上传</a><input type='file' accept='image/jpeg,image/png,image/gif'> <a href='#'>删除</a>&nbsp;</p></div>";
+                        modal(title, body, null, tr, ' ');
+                        /*  var title = tr.getElementsByTagName('input')[0].value;
+                         var body = "<input id='img' name='img' type='file' class='file-loading'>";
+                         var id = tr.dataset.id;
+                         modal(title, body, null, null, ' ');*/
+                        /*    $('#img').fileinput({
+                         language: 'zh',
+                         uploadUrl: '/img-upload',
+                         uploadAsync: true,
+                         showClose: false,
+                         autoReplace: true,
+                         showUploadedThumbs:false,
+                         fileActionSettings: {showZoom: false},
+                         allowedFileExtensions: ['jpg', 'png', 'gif'],
+                         maxFileSize: 500,
+                         minFileCount: 1,
+                         maxFileCount: 1,
+                         overwriteInitial: true,
+                         uploadExtraData: {id: id},
+                         initialPreview: ['/img/' + id + '.jpg?t='+ Math.random()],
+                         initialPreviewAsData: true,
+                         initialPreviewFileType: 'image',
+                         initialPreviewConfig: [{
+                         caption: title,
+                         url: '/img-delete',
+                         key: id + '.jpg'
+                         }]
+                         });*/
+                    }
+                }
+            )
             .on('click', 'tr[data-delete=0] button,tr[data-delete=1] button', function () {
                 $tr = $(this.parentNode.parentNode);
                 $tr.attr('data-delete', ($tr.attr('data-delete') - 0 + 1) % 2);
@@ -310,6 +395,75 @@
          $button.removeClass('btn-primary');
          }
          });*/
+
+        $modal
+            .on('click', '#dish-img a:first', function () {
+                $(this).next().trigger('click');
+            })
+            .on('click', '#dish-img a:last', function () {
+                var warnings = this.parentNode.previousSibling.firstChild;
+                if (this.parentNode.firstChild.innerHTML != '无') {
+                    var tr = $modal.data('arg');
+                    var id = tr.dataset.id;
+                    warnings.innerHTML = '';
+                    $.ajax({
+                        url: '/img-delete',
+                        type: 'POST',
+                        context: this,
+                        cache: false,
+                        data: {id: id}
+                    }).done(function () {
+                        this.parentNode.previousSibling.previousSibling.src = '/img/无?' + new Date().getTime();
+                        this.parentNode.firstChild.innerHTML = '无';
+                        tr.getElementsByTagName('a')[0].innerHTML = '无';
+                        this.previousSibling.previousSibling.value = '';
+                        warnings.innerHTML = '删除成功!';
+
+                    }).fail(function () {
+                        warnings.innerHTML = '删除失败,发生错误!';
+                    })
+                } else {
+                    warnings.innerHTML = '菜品没有图片!';
+                }
+
+            })
+            .on('change', '#dish-img input', function () {
+                var img = this.files[0];
+                if (img) {
+                    var warnings = this.parentNode.previousSibling.firstChild;
+                    if (img.type == 'image/jpeg' || img.type == 'image/png' || img.type == 'image/gif') {
+                        if (img.size < 512000) {
+                            warnings.innerHTML = '';
+                            var tr = $modal.data('arg');
+                            var id = tr.dataset.id;
+                            var formdata = new FormData();
+                            formdata.append('img', img);
+                            formdata.append('id', id);
+                            $.ajax({
+                                url: '/img-upload',
+                                type: 'POST',
+                                context: this,
+                                cache: false,
+                                data: formdata,
+                                processData: false,
+                                contentType: false
+                            }).done(function () {
+                                    this.parentNode.previousSibling.previousSibling.src = '/img/' + img.name + "?" + new Date().getTime();
+                                    this.previousSibling.previousSibling.previousSibling.innerHTML = img.name;
+                                    tr.getElementsByTagName('a')[0].innerHTML = img.name;
+                                    warnings.innerHTML = '上传成功!';
+                                }
+                            ).fail(function () {
+                                warnings.innerHTML = '上传失败,发生错误!';
+                            });
+                        } else {
+                            warnings.innerHTML = '超过500KB大小限制!';
+                        }
+                    } else {
+                        warnings.innerHTML = '上传图片必须为jpg,png,gif格式!';
+                    }
+                }
+            });
 
         $(window).on('resize', function () {
             $("input[aria-describedby]").tooltip('show');

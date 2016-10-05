@@ -9,6 +9,7 @@ public class Dish {
     private int type;
     private float price;
     private String recommended;
+    private String img;
     private int sales;
     private String release;
     private boolean onoff;
@@ -59,6 +60,14 @@ public class Dish {
 
     public void setRecommended(String recommended) {
         this.recommended = recommended;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public int getSales() {

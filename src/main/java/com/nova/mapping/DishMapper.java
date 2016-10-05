@@ -25,6 +25,9 @@ public interface DishMapper {
     @Update("update menu set price=#{0} where id=#{1}")
     int updatePrice(float price, int id);
 
+    @Update("update menu set img=#{0} where id=#{1}")
+    int updateImg(String img, int id);
+
     @Update("update menu set onoff=#{0} where id=#{1}")
     int updateOnoff(int onoff, int id);
 
@@ -34,4 +37,5 @@ public interface DishMapper {
 
     @Delete("delete from menu where id in (${value})")
     int deleteDish(String ids);
+
 }

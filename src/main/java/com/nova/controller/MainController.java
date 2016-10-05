@@ -15,9 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -129,6 +132,38 @@ public class MainController {
     public void postDelete(String ids) {
         dishService.deleteDish(ids);
 
+    }
+
+    /*上传菜品图片*/
+    @RequestMapping(value = "/img-upload", method = RequestMethod.POST)
+    @ResponseBody
+    public void imgUpload(MultipartFile img, int id, HttpServletRequest request) {
+        try {
+            String imgname = img.getOriginalFilename();
+            String savepath = request.getSession().getServletContext().getRealPath("/WEB-INF/img") + File.separator + imgname;
+            img.transferTo(new File(savepath));
+            dishService.updateImg(imgname, id);
+            //            return "{}";
+            //           return "{\"initialPreview\":[\"/img/" + id + ".jpg?t=12\"],\"initialPreviewConfig\":[{\"caption\": \"" + id + "\",\"url\": \"/img-delete\",\"key\":\"" + id + ".jpg\"}],\"append\":\"false\"}";
+        } catch (Exception e) {
+//            e.printStackTrace();
+//            return "{\"error\":\"发生错误,上传失败.\"}";
+        }
+    }
+
+    /*删除菜品图片*/
+    @RequestMapping(value = "/img-delete", method = RequestMethod.POST)
+    @ResponseBody
+    public void imgDelete(int id) {
+        try {
+            dishService.updateImg("无", id);
+//            String deletepath = request.getSession().getServletContext().getRealPath("/WEB-INF/img") + File.separator + id;
+//            (new File(deletepath)).delete();
+//            return "{}";
+        } catch (Exception e) {
+//            return "{\"error\":\"发生错误,删除失败.\"}";
+//
+        }
     }
 
 
