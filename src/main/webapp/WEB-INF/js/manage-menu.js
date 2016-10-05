@@ -433,29 +433,33 @@
                     var warnings = this.parentNode.previousSibling.firstChild;
                     if (img.type == 'image/jpeg' || img.type == 'image/png' || img.type == 'image/gif') {
                         if (img.size < 512000) {
-                            warnings.innerHTML = '';
-                            var tr = $modal.data('arg');
-                            var id = tr.dataset.id;
-                            var formdata = new FormData();
-                            formdata.append('img', img);
-                            formdata.append('id', id);
-                            $.ajax({
-                                url: '/img-upload',
-                                type: 'POST',
-                                context: this,
-                                cache: false,
-                                data: formdata,
-                                processData: false,
-                                contentType: false
-                            }).done(function () {
-                                    this.parentNode.previousSibling.previousSibling.src = '/img/' + img.name + "?" + new Date().getTime();
-                                    this.previousSibling.previousSibling.previousSibling.innerHTML = img.name;
-                                    tr.getElementsByTagName('a')[0].innerHTML = img.name;
-                                    warnings.innerHTML = '上传成功!';
-                                }
-                            ).fail(function () {
-                                warnings.innerHTML = '上传失败,发生错误!';
-                            });
+                            if (img.name.length <= 15) {
+                                warnings.innerHTML = '';
+                                var tr = $modal.data('arg');
+                                var id = tr.dataset.id;
+                                var formdata = new FormData();
+                                formdata.append('img', img);
+                                formdata.append('id', id);
+                                $.ajax({
+                                    url: '/img-upload',
+                                    type: 'POST',
+                                    context: this,
+                                    cache: false,
+                                    data: formdata,
+                                    processData: false,
+                                    contentType: false
+                                }).done(function () {
+                                        this.parentNode.previousSibling.previousSibling.src = '/img/' + img.name + "?" + new Date().getTime();
+                                        this.previousSibling.previousSibling.previousSibling.innerHTML = img.name;
+                                        tr.getElementsByTagName('a')[0].innerHTML = img.name;
+                                        warnings.innerHTML = '上传成功!';
+                                    }
+                                ).fail(function () {
+                                    warnings.innerHTML = '上传失败,发生错误!';
+                                });
+                            } else {
+                                warnings.innerHTML = '文件名(包括扩展名)不能超过15个字符!';
+                            }
                         } else {
                             warnings.innerHTML = '超过500KB大小限制!';
                         }
