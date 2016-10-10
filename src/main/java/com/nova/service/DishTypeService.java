@@ -12,6 +12,8 @@ public interface DishTypeService {
 
     int updateDishtype(String type, int id);
 
+    int updateExchangetype(int id_0, int id_1);
+
     int insertNewtype(DishType dishType);
 
     int deleteDishtype(int id);

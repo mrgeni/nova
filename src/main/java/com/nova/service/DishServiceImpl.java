@@ -21,8 +21,16 @@ public class DishServiceImpl implements DishService {
         return this.dishMapper.getMenu(type);
     }
 
-    public int updateRecommended(String recommended, int id) {
-        return this.dishMapper.updateRecommended(recommended, id);
+    public int updateRECOM(boolean RECOM, int id) {
+        return this.dishMapper.updateRECOM(RECOM, id);
+    }
+
+    public int updateHOT(boolean HOT, int id) {
+        return this.dishMapper.updateHOT(HOT, id);
+    }
+
+    public int updateNEW(boolean NEW, int id) {
+        return this.dishMapper.updateNEW(NEW, id);
     }
 
     public int updateDishname(String dishname, int id) {
@@ -37,9 +45,13 @@ public class DishServiceImpl implements DishService {
         return this.dishMapper.updateImg(img, id);
     }
 
-    public int updateOnoff(int onoff, int id) {
+    public int updateOnoff(boolean onoff, int id) {
         return this.dishMapper.updateOnoff(onoff, id);
     }
+
+//    public int updateExchange(int type_0, int type_1) {
+//        return this.dishMapper.updateExchange(type_0, type_1);
+//    }
 
     public int insertNewdish(Dish dish) {
         this.dishMapper.insertNewdish(dish);

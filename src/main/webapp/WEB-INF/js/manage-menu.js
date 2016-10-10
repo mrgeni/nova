@@ -2,15 +2,12 @@
  * Created by Go on 2016/3/20.
  */
 (function () {
-    /*var table = document.getElementById('table');*/
-    /*设置表的标题栏*/
     var trs;
-    /* var trs = "<tr><th><div class='col-xs-2'></div>菜名</th><th class='text-center'>价格</th><th class='text-center'>状态</th></tr>";*/
     var $div = $('#input-width');
     var $modal = $('#modal');
     var disable = {true: '', false: 'disabled'};
+    var checked = {true: 'checked', false: ''};
     var editable = true;
-
     $('nav')
     /*编辑菜品种类按钮*/
         .on('click', '#edit-type', function () {
@@ -25,19 +22,19 @@
                     /*$tr.removeAttr('data-delete');*/
                     $('tr[data-onoff=true] input,tr button').prop('disabled', false);
                 }
-
                 for (var i = 0; i < editor.length; i++) {
                     editor[i].value = (editor[i].value + 0 + 1) % 2;
                 }
             }
         })
+
         /*添加菜品按钮*/
         .on('click', '#add-dish', function () {
-            if (document.getElementById('delete-dish').className == 'glyphicon glyphicon-minus-sign') {
+            if (!$('input[aria-describedby]').length && document.getElementById('delete-dish').className == 'glyphicon glyphicon-minus-sign') {
                 var active = document.getElementById('navbar-collapse').getElementsByClassName('active')[0];
                 if (active) {
                     $.post("/add-dish", {type: active.id}, function (i) {
-                        $('tbody').append($("<tr data-id=" + i + " data-onoff='true'><td class='col-xs-6'><div class='col-xs-2'></div><span><p></p><input maxlength='20' readonly='true' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html('新菜名').outerWidth(true) + "px' value='新菜品'/><strong class='recommended'></strong></span></td><td><span><p></p><input type='number' readonly='true' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='0.00'/></span></td><td><a href='#'>无</a></td><td><button class='btn btn-default btn-sm'></button></td></tr>"));
+                        $('tbody').append($("<tr data-id=" + i + " data-onoff='true'><td class='col-xs-6'><span><p></p><input maxlength='20' readonly='true' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html('新菜名').outerWidth(true) + "px' value='新菜品'/></span></td><td><span><p></p><input type='number' readonly='true' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='0.00'/></span></td><td><input type='checkbox'></td><td><input type='checkbox'></td><td><input type='checkbox'></td><td><a href='#'>无</a></td><td><button class='btn btn-default btn-sm'></button></td></tr>"));
                         $('input').tooltip();
                     });
                 }
@@ -46,6 +43,7 @@
                 }
             }
         })
+
         /*删除菜品按钮*/
         .on('click', '#delete-dish', function () {
             var $tr = $('tr');
@@ -95,9 +93,8 @@
                     }
                 }
             }
-
-
         })
+
         /*添加菜类按钮*/
         .on('click', '#add-type', function () {
             if (editable) {
@@ -115,6 +112,7 @@
                 }
             }
         })
+
         /*删除菜类按钮*/
         .on('click', '#delete-type', function () {
             if (editable) {
@@ -133,6 +131,8 @@
                  }*/
             }
         })
+
+        /*菜类名称验证正确后,提交后台,否则显示必输字样*/
         .on({
             'input': function () {
 
@@ -148,7 +148,39 @@
                     editable = true;
                 }
             }
-        }, 'input[style]');
+        }, 'input[style]')
+
+        /*菜类名称可拖拽,调整排列顺序*/
+        .on({
+            'dragstart': function (e) {
+                if (this.parentNode.className == 'active' && document.getElementById('edit-type').innerHTML == '确认') {
+                    e.originalEvent.dataTransfer.setData('type', this.innerHTML);
+                }
+                else {
+                    return false;
+                }
+            }, 'dragover': function (e) {
+                e.preventDefault();
+            }, 'drop': function (e) {
+                var transfer = e.originalEvent.dataTransfer;
+                var type = transfer.getData('type');
+                if (type) {
+                    var active = this.parentNode.parentNode.getElementsByClassName('active')[0];
+                    if (active.firstChild.textContent) {
+                        $.post('/postexchangetype', {
+                            id_0: active.id,
+                            id_1: this.parentNode.id
+                        });
+                        active.firstChild.innerHTML = this.innerHTML;
+                        active.className = '';
+                        this.innerHTML = type;
+                        this.parentNode.className = 'active';
+                    }
+                    transfer.clearData();
+                }
+            }
+        }, ' li[id] a');
+
 
     /*通用提示框*/
     function modal(title, body, callback, arg, style) {
@@ -180,35 +212,19 @@
             ul.children[0].className = 'active';
             displaytbody(ul.children[0].id);
         }
-
     }
-
-    /*   .on('click', '#navbar-collapse,div.navbar-header', function (e) {
-
-     if (e.target.nodeName == 'DIV') {
-     var active = this.parentNode.getElementsByClassName('active')[0];
-     if (active && confirm('确定删除 ' + active.children[0].text + '?')) {
-     var ul = active.parentNode;
-     ul.removeChild(active);
-     if (ul.children.length) {
-     ul.children[0].className = 'active';
-     }
-     }
-     }
-     });*/
 
     /*判断菜品是否下架或者是否处于 添加/删除-菜品 界面*/
     function dishoffordeleting(tr_dataset) {
         return !!(tr_dataset.onoff == 'false' || tr_dataset.delete);
     }
 
-
     /*菜单生成通用函数*/
     function displaytbody(type, init, edit_type) {
         $.post("/getmenu", {type: type}, function (Menu) {
-            trs = "<tr><th><div class='col-xs-2'></div>菜名</th><th class='text-center'>价格</th><th class='text-center'>图片</th><th class='text-center'>状态</th></tr>";
+            trs = "<tr><th class='col-xs-6'>菜名</th><th class='text-center'>价格</th><th class='text-center RECOM'><small>推荐</small></th><th class='text-center HOT'><small>热卖</small></th><th class='text-center NEW'><small>新品</small></th><th class='text-center'>图片</th><th class='text-center'>状态</th></tr>";
             for (var i in Menu) {
-                trs += "<tr data-id=" + Menu[i].id + " data-onoff=" + Menu[i].onoff + " ><td class='col-xs-6'><div class='col-xs-2'></div><span><p></p><input " + disable[Menu[i].onoff] + " maxlength='20' readonly='true' name='' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html(Menu[i].dishname).outerWidth(true) + "px' value='" + Menu[i].dishname + "'/><strong class='recommended'>" + Menu[i].recommended + "</strong></span></td><td><span><p></p><input type='number' " + disable[Menu[i].onoff] + " readonly='true' name='' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='" + Menu[i].price.toFixed(2) + "'/></span></td><td><a href='#'>" + Menu[i].img + "</a></td><td><button class='btn btn-default btn-sm'></button></td></tr>";
+                trs += "<tr data-id=" + Menu[i].id + " data-onoff=" + Menu[i].onoff + "><td class='col-xs-6'><span><p></p><input " + disable[Menu[i].onoff] + " maxlength='20' readonly='true' name='' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' style =' width:" + $div.html(Menu[i].dishname).outerWidth(true) + "px' value='" + Menu[i].dishname + "'/></span></td><td><span><p></p><input type='number' " + disable[Menu[i].onoff] + " readonly='true' name='' data-toggle='tooltip' data-placement='auto left' data-title='点击修改' value='" + Menu[i].price.toFixed(2) + "'/></span></td><td><input type='checkbox' " + disable[Menu[i].onoff] + " " + checked[Menu[i].recom] + "></td><td><input type='checkbox' " + disable[Menu[i].onoff] + " " + checked[Menu[i].hot] + "></td><td><input type='checkbox' " + disable[Menu[i].onoff] + " " + checked[Menu[i].new] + "></td><td><a href='#'>" + Menu[i].img + "</a></td><td><button class='btn btn-default btn-sm'></button></td></tr>";
             }
             $('tbody').html(trs);
             init && init();
@@ -236,73 +252,105 @@
 
     /*初始化菜单页面*/
     function init_display() {
-        /*$("input").tooltip();*/
         var $tr;
         var $this;
         var illegal;
-        /*单击设置推荐菜*/
-        $('tbody').on('click', 'tr:not([data-delete])', function (e) {
-            $tr = $(this);
-            switch (e.target.nodeName) {
-                case 'TD':
-                    if (!$tr.find('input:disabled').length) {
-                        var $recommend = $tr.find('strong');
-                        if ($recommend.text()) {
-                            $recommend.text('');
-                        } else {
-                            $recommend.text('推荐');
-                        }
-                        /*同步数据库menu表,recommended字段*/
-                        $.post("/postrecommended", {'recommended': $recommend.text(), 'id': $tr.data('id')});
-                    }
-                    break;
-                case 'INPUT':
-                    $this = $(e.target);
-                    if ($this.prop('readonly') && $this.is(':focus')) {
-                        $this.prop('readonly', false);
-                        $this.css('background-color', 'azure');
-                        /*inputvalue = $this.val();*/
-                        $this.prop('name', $this.val());
-                        $this.tooltip('destroy');
-                    }
-                    break;
-                case 'BUTTON':
+        $('tbody')
+        /*菜名 价格 点击修改*/
+            .on('click', 'tr:not([data-delete]) input', function () {
+                /*$tr = $(this);*/
+                /*switch (e.target.nodeName) {
+                 /!* case 'TD':
+                 if (!$tr.find('input:disabled').length) {
+                 var $recommend = $tr.find('strong');
+                 if ($recommend.text()) {
+                 $recommend.text('');
+                 } else {
+                 $recommend.text('推荐');
+                 }
+                 /!*同步数据库menu表,recommended字段*!/
+                 $.post("/postrecommended", {'recommended': $recommend.text(), 'id': $tr.data('id')});
+                 }
+                 break;*!/
+                 case 'INPUT':*/
+                $this = $(this);
+                if ($this.prop('readonly') && $this.is(':focus')) {
+                    $this.prop('readonly', false);
+                    $this.css('background-color', 'azure');
+                    /*inputvalue = $this.val();*/
+                    $this.prop('name', $this.val());
+                    $this.tooltip('destroy');
+                }
+                /*    break;
+                 /!* case 'BUTTON':
+                 if (!$('input[aria-describedby]').length) {
+                 var arr = this.getElementsByTagName('input');
+                 this.dataset.onoff = arr[0].disabled;
+                 $.post('/postonoff', {onoff: arr[0].disabled, id: this.dataset.id});
+                 for (var i = 0; i < arr.length; i++) {
+                 arr[i].disabled = !arr[i].disabled;
+                 }
+                 /!*  if ($tr.attr('data-onoff') == 'true') {
+                 $tr.attr('data-onoff', 'false');
+                 $tr.find('input').prop('disabled', true);
+                 $.post("/postonoff", {'onoff': 0, 'id': $tr.data('id')});
+                 } else {
+                 $tr.attr('data-onoff', 'true');
+                 $tr.find('input').prop('disabled', false);
+                 $.post("/postonoff", {'onoff': 1, 'id': $tr.data('id')});
+                 }*!/
+                 }
+                 break;*!/
+                 }*/
+                /*   if (e.target.nodeName != 'INPUT') {
+                 $tr = $(this);
+                 var $recommend = $tr.find('strong');
+                 if ($recommend.text()) {
+                 $recommend.text('');
+                 } else {
+                 $recommend.text('推荐');
+                 }
+                 /!*同步数据库menu表,recommended字段*!/
+                 $.post("/postrecommended", {'recommended': $recommend.text(), 'id': $tr.data('id')});
 
-                    if (!$('input[aria-describedby]').length) {
-                        if ($tr.attr('data-onoff') == 'true') {
-                            $tr.attr('data-onoff', 'false');
-                            $tr.find('input').prop('disabled', true);
-                            $.post("/postonoff", {'onoff': 0, 'id': $tr.data('id')});
-                        } else {
-                            $tr.attr('data-onoff', 'true');
-                            $tr.find('input').prop('disabled', false);
-                            $.post("/postonoff", {'onoff': 1, 'id': $tr.data('id')});
-                        }
-                    }
-                    break;
-            }
-            /*   if (e.target.nodeName != 'INPUT') {
-             $tr = $(this);
-             var $recommend = $tr.find('strong');
-             if ($recommend.text()) {
-             $recommend.text('');
-             } else {
-             $recommend.text('推荐');
-             }
-             /!*同步数据库menu表,recommended字段*!/
-             $.post("/postrecommended", {'recommended': $recommend.text(), 'id': $tr.data('id')});
+                 } else {
+                 $this = $(e.target);
+                 if ($this.attr('readonly') && $this.is(':focus')) {
+                 $this.attr('readonly', false);
+                 $this.css('background-color', 'azure');
+                 inputvalue = $this.val();
+                 $this.attr('name', inputvalue);
+                 $this.tooltip('destroy');
+                 }
+                 }*/
+            })
 
-             } else {
-             $this = $(e.target);
-             if ($this.attr('readonly') && $this.is(':focus')) {
-             $this.attr('readonly', false);
-             $this.css('background-color', 'azure');
-             inputvalue = $this.val();
-             $this.attr('name', inputvalue);
-             $this.tooltip('destroy');
-             }
-             }*/
-        })
+            /*上架下架 按钮*/
+            .on('click', 'tr:not([data-delete]) button', function () {
+                var tr = this.parentNode.parentNode;
+                if (!$('input[aria-describedby]').length) {
+                    var arr = tr.getElementsByTagName('input');
+                    tr.dataset.onoff = arr[0].disabled;
+                    $.post('/postonoff', {onoff: arr[0].disabled, id: tr.dataset.id});
+                    for (var i = 0; i < arr.length; i++) {
+                        arr[i].disabled = !arr[i].disabled;
+                    }
+                }
+            })
+
+            /*菜品 设置 推荐/热卖/新品 功能*/
+            .on('click', 'input[type=checkbox]', function () {
+                var td = this.parentNode;
+                var tr = td.parentNode;
+                if ($('input[aria-describedby]').length || tr.dataset.delete) {
+                    return false;
+                } else {
+                    var index = {2: 2, 3: 3, 4: 4}[td.cellIndex];
+                    $.post('/postTags', {index: index, checked: this.checked, id: tr.dataset.id});
+                }
+            })
+
+            /*菜品 设置 图片 功能*/
             .on('click', 'a', function () {
                     var tr = this.parentNode.parentNode;
                     if ($('input[aria-describedby]').length || document.getElementById('edit-type').innerHTML == '确认' || dishoffordeleting(tr.dataset)) {
@@ -341,6 +389,8 @@
                     }
                 }
             )
+
+            /*菜品 保留 删除按钮*/
             .on('click', 'tr[data-delete=0] button,tr[data-delete=1] button', function () {
                 $tr = $(this.parentNode.parentNode);
                 $tr.attr('data-delete', ($tr.attr('data-delete') - 0 + 1) % 2);
@@ -353,6 +403,8 @@
                 });
 
             })
+
+            /*菜名 验证正确后,提交后台,否则弹出tooltip提示条*/
             .on({
                 'input': function () {
                     var inputvalue = this.value;
@@ -364,6 +416,8 @@
                     blur(this, '/postdishname')
                 }
             }, 'tr:not([data-delete]) input[maxlength]')
+
+            /*价格 验证正确后,提交后台,否则弹出tooltip提示条*/
             .on({
                 'input': function () {
                     /* inputvalue = parseFloat(this.value).toFixed(2);*/
@@ -373,7 +427,7 @@
                     this.value = parseFloat(this.value).toFixed(2);
                     blur(this, '/postprice')
                 }
-            }, 'tr:not([data-delete]) input[type]');
+            }, 'tr:not([data-delete]) input[type=number]');
         /* .on('click', 'a', function () {
          $tr = $('tr');
          var $button = $('button');
@@ -396,6 +450,7 @@
          }
          });*/
 
+        /*菜品图片 上传/删除/更新 功能*/
         $modal
             .on('click', '#dish-img a:first', function () {
                 $(this).next().trigger('click');
@@ -418,14 +473,12 @@
                         tr.getElementsByTagName('a')[0].innerHTML = '无';
                         this.previousSibling.previousSibling.value = '';
                         warnings.innerHTML = '删除成功!';
-
                     }).fail(function () {
                         warnings.innerHTML = '删除失败,发生错误!';
                     })
                 } else {
                     warnings.innerHTML = '菜品没有图片!';
                 }
-
             })
             .on('change', '#dish-img input', function () {
                 var img = this.files[0];
@@ -469,9 +522,12 @@
                 }
             });
 
+        /*浏览器窗口尺寸缩放时,tooltip提示条保持相对位置不变*/
         $(window).on('resize', function () {
             $("input[aria-describedby]").tooltip('show');
         });
+
+        /*失去焦点通用函数*/
         function blur(el, url) {
             $this = $(el);
             switch (true) {
@@ -490,6 +546,7 @@
             }
         }
 
+        /*验证输入正确性,通用函数*/
         function input(el, value, flag) {
             $this = $(el);
             switch (true) {
@@ -510,7 +567,6 @@
             }
         }
     }
-
 
     /*function getmenu(type) {
      /!*AJAX异步读取URL:/getmenu处的后台数据,获取菜单*!/
@@ -684,6 +740,5 @@
      }
      });
      }*/
-
 }());
 

@@ -45,6 +45,7 @@
             <!--  <mvc:mapping path="/menu"/>
               <mvc:mapping path="/manageMenu"/>-->
             <mvc:exclude-mapping path="/"/>
+            <mvc:exclude-mapping path="/authority"/>
             <mvc:exclude-mapping path="/submit"/>
             <bean class="com.nova.interceptor.GlobalLogin_Interceptor"/>
         </mvc:interceptor>

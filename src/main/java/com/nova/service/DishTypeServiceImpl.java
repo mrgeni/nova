@@ -23,6 +23,10 @@ public class DishTypeServiceImpl implements DishTypeService {
         return this.dishTypeMapper.updateDishtype(type, id);
     }
 
+    public int updateExchangetype(int id_0, int id_1) {
+        return this.dishTypeMapper.updateExchangetype(id_0, id_1);
+    }
+
     public int insertNewtype(DishType dishType) {
         this.dishTypeMapper.insertNewtype(dishType);
         return dishType.getId();

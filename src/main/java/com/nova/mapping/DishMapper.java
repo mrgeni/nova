@@ -16,8 +16,14 @@ public interface DishMapper {
     @Select("select * from menu where type=#{0}")
     List<Dish> getMenu(int type);
 
-    @Update("update menu set recommended =#{0} where id=#{1}")
-    int updateRecommended(String recommended, int id);
+    @Update("update menu set RECOM =#{0} where id=#{1}")
+    int updateRECOM(boolean RECOM, int id);
+
+    @Update("update menu set HOT=#{0} where id=#{1}")
+    int updateHOT(boolean HOT, int id);
+
+    @Update("update menu set NEW=#{0} where id=#{1}")
+    int updateNEW(boolean NEW, int id);
 
     @Update("update menu set dishname=#{0} where id=#{1}")
     int updateDishname(String dishname, int id);
@@ -29,7 +35,10 @@ public interface DishMapper {
     int updateImg(String img, int id);
 
     @Update("update menu set onoff=#{0} where id=#{1}")
-    int updateOnoff(int onoff, int id);
+    int updateOnoff(boolean onoff, int id);
+
+//    @Update("update menu as m1 join menu as m2 on (m1.type=#{0} and m2.type=#{1}) set m1.type=m2.type,m2.type=m1.type")
+//    int updateExchange(int type_0, int type_1);
 
     @Insert("insert into menu (type) values (#{type})")
     @Options(useGeneratedKeys = true)

@@ -7,6 +7,21 @@
     text-shadow: 1px 1px 1px lightgray;
 }
 
+.RECOM {
+    color: steelblue;
+    text-shadow: 1px 1px 1px lightgray;
+}
+
+.HOT {
+    color: red;
+    text-shadow: 1px 1px 1px lightsteelblue;
+}
+
+.NEW {
+    color: green;
+    text-shadow: 1px 1px 1px lightgray;
+}
+
 #input-width {
     white-space: pre;
     padding: 1px;
@@ -56,7 +71,7 @@ tr[data-delete='1'] span {
     text-decoration: line-through;
 }
 
-tr[data-delete='1'] input {
+tr[data-delete='1'] input:not([type=checkbox]) {
     display: none;
 }
 

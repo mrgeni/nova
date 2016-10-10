@@ -11,7 +11,11 @@ public interface DishService {
 
     List<Dish> getMenu(int type);
 
-    int updateRecommended(String recommended, int id);
+    int updateRECOM(boolean RECOM, int id);
+
+    int updateHOT(boolean HOT, int id);
+
+    int updateNEW(boolean NEW, int id);
 
     int updateDishname(String dishname, int id);
 
@@ -19,7 +23,9 @@ public interface DishService {
 
     int updateImg(String img,int id);
 
-    int updateOnoff(int onoff, int id);
+    int updateOnoff(boolean onoff, int id);
+
+//    int updateExchange(int type_0, int type_1);
 
     int insertNewdish(Dish dish);
 

@@ -20,7 +20,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -43,6 +46,15 @@ public class MainController {
 //    public String index() {
 //        return "index";
 //    }
+
+    @RequestMapping(value = "/authority", method = RequestMethod.GET)
+    public void authority(String signature, String timestamp, String nonce, String echostr, HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+        pw.print(echostr);
+        pw.flush();
+        pw.close();
+    }
+
 
     /*首页，显示登录页面*/
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -91,11 +103,38 @@ public class MainController {
         return dishService.getMenu(type);
     }
 
-    /*前台同步数据库menu表,recommended字段*/
-    @RequestMapping(value = "/postrecommended", method = RequestMethod.POST)
+//    /*前台同步数据库menu表,recommended字段*/
+//    @RequestMapping(value = "/postrecommended", method = RequestMethod.POST)
+//    @ResponseBody
+//    public void postRecommended(@RequestParam String recommended, @RequestParam int id) {
+//        dishService.updateRecommended(recommended, id);
+//    }
+
+    /*前台同步数据库menu表,RECOM HOT NEW字段*/
+    @RequestMapping(value = "/postTags", method = RequestMethod.POST)
     @ResponseBody
-    public void postRecommended(@RequestParam String recommended, @RequestParam int id) {
-        dishService.updateRecommended(recommended, id);
+    public void postTags(int index, boolean checked, int id) {
+        switch (index) {
+            case 2:
+                dishService.updateRECOM(checked, id);
+                break;
+            case 3:
+                dishService.updateHOT(checked, id);
+                break;
+            case 4:
+                dishService.updateNEW(checked, id);
+                break;
+        }
+
+    }
+
+    /*调换两种菜品的排列顺序,更新dish_type表,id字段*/
+    @RequestMapping(value = "/postexchangetype", method = RequestMethod.POST)
+    @ResponseBody
+    public void postExchangetype(int id_0, int id_1) {
+        dishTypeService.updateExchangetype(0, id_0);
+        dishTypeService.updateExchangetype(id_0, id_1);
+        dishTypeService.updateExchangetype(id_1, 0);
     }
 
     /*前台同步数据库menu表,dishname字段*/
@@ -115,7 +154,7 @@ public class MainController {
     /*前台同步数据库menu表,onoff字段*/
     @RequestMapping(value = "/postonoff", method = RequestMethod.POST)
     @ResponseBody
-    public void postOnoff(@RequestParam int onoff, @RequestParam int id) {
+    public void postOnoff(boolean onoff, int id) {
         dishService.updateOnoff(onoff, id);
     }
 

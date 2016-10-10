@@ -8,7 +8,9 @@ public class Dish {
     private String dishname;
     private int type;
     private float price;
-    private String recommended;
+    private boolean RECOM;
+    private boolean HOT;
+    private boolean NEW;
     private String img;
     private int sales;
     private String release;
@@ -53,13 +55,28 @@ public class Dish {
         this.price = price;
     }
 
-
-    public String getRecommended() {
-        return recommended;
+    public boolean isRECOM() {
+        return RECOM;
     }
 
-    public void setRecommended(String recommended) {
-        this.recommended = recommended;
+    public void setRECOM(boolean RECOM) {
+        this.RECOM = RECOM;
+    }
+
+    public boolean isHOT() {
+        return HOT;
+    }
+
+    public void setHOT(boolean HOT) {
+        this.HOT = HOT;
+    }
+
+    public boolean isNEW() {
+        return NEW;
+    }
+
+    public void setNEW(boolean NEW) {
+        this.NEW = NEW;
     }
 
     public String getImg() {

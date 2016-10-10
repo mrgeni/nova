@@ -17,6 +17,9 @@ public interface DishTypeMapper {
     @Update("update dish_type set type =#{0} where id=#{1}")
     int updateDishtype(String type, int id);
 
+    @Update("update dish_type set id =#{0} where id=#{1}")
+    int updateExchangetype(int id_0, int id_1);
+
     @Insert("insert into dish_type values()")
     @Options(useGeneratedKeys = true)
     int insertNewtype(DishType dishType);
