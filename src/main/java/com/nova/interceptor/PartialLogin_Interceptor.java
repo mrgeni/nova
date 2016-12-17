@@ -16,6 +16,7 @@ public class PartialLogin_Interceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (request.getSession().getAttribute("principal") != null) {
             response.sendRedirect("/menu");
+            /*response.sendRedirect(request.getHeader("Referer"));*/
             return false;
         }
 

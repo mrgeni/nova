@@ -2,6 +2,7 @@ package com.nova.service;
 
 import com.nova.mapping.DishMapper;
 import com.nova.model.Dish;
+import com.nova.model.DishType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,10 @@ public class DishServiceImpl implements DishService {
 
     public List<Dish> getMenu(int type) {
         return this.dishMapper.getMenu(type);
+    }
+
+    public List<DishType> getDishesByType() {
+        return this.dishMapper.getDishesByType();
     }
 
     public int updateRECOM(boolean RECOM, int id) {

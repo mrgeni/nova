@@ -26,4 +26,5 @@ public interface DishTypeMapper {
 
     @Delete("delete from dish_type where id=#{0}")
     int deleteDishtype(int id);
+
 }

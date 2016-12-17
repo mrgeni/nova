@@ -1,6 +1,7 @@
 package com.nova.mapping;
 
 import com.nova.model.Dish;
+import com.nova.model.DishType;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +16,11 @@ public interface DishMapper {
 
     @Select("select * from menu where type=#{0}")
     List<Dish> getMenu(int type);
+
+    @Select("select * from dish_type")
+    @Results({@Result(id=true,column = "id",property = "id"),@Result(column = "type",property = "type"),@Result(column = "id",property = "dishes",many=@Many(select = "com.nova.mapping.DishMapper.getMenu"))})
+    List<DishType> getDishesByType();
+
 
     @Update("update menu set RECOM =#{0} where id=#{1}")
     int updateRECOM(boolean RECOM, int id);

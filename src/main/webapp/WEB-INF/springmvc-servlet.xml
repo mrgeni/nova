@@ -42,6 +42,7 @@
         </mvc:interceptor>
         <mvc:interceptor>
             <mvc:mapping path="/*"/>
+            <mvc:mapping path="/*/"/>
             <!--  <mvc:mapping path="/menu"/>
               <mvc:mapping path="/manageMenu"/>-->
             <mvc:exclude-mapping path="/"/>
@@ -68,10 +69,6 @@
         <property name="basePackage" value="com.nova.mapping"/>
     </bean>
 
-    <!-- <bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean" >
-         <property name="mapperInterface" value="com.nova.mapping.UserMapper"/>
-         <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-     </bean>-->
     <!-- 配置事务管理器 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>

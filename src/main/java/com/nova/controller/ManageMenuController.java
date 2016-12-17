@@ -3,11 +3,9 @@ package com.nova.controller;
 import com.nova.model.Dish;
 import com.nova.model.DishType;
 import com.nova.model.Manager;
-import com.nova.model.User;
 import com.nova.service.DishService;
 import com.nova.service.DishTypeService;
 import com.nova.service.ManagerService;
-import com.nova.service.UserService;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +30,7 @@ import java.util.List;
 
 @SessionAttributes("principal")
 @Controller
-public class MainController {
-    @Autowired
-    private UserService userService;
+public class ManageMenuController {
     @Autowired
     private DishService dishService;
     @Autowired
@@ -222,50 +218,5 @@ public class MainController {
             modelMap.addAttribute("principal", manager.getUsername());
             return "redirect:/menu";
         }
-    }
-
-    @RequestMapping(value = {"/users"}, method = RequestMethod.GET)
-    public String users(ModelMap modelMap) {
-        List<User> Users = userService.getAll();
-        modelMap.addAttribute("Users", Users);
-        return "userManager";
-    }
-
-    @RequestMapping(value = "/addUser", method = RequestMethod.GET)
-    public String addUser() {
-        return "addUser";
-    }
-
-    @RequestMapping(value = "/addUserPost", method = RequestMethod.POST)
-    public String addUserPost(@ModelAttribute("user") User user) {
-        userService.add(user);
-        return "redirect:/users";
-    }
-
-
-    @RequestMapping(value = "/detailUser/{userId}", method = RequestMethod.GET)
-    public String detailUser(@PathVariable("userId") int userId, ModelMap modelMap) {
-        User user = userService.getById(userId);
-        modelMap.addAttribute("user", user);
-        return "userDetail";
-    }
-
-    @RequestMapping(value = "/updateUser/{userId}", method = RequestMethod.GET)
-    public String updateUser(@PathVariable("userId") int userId, ModelMap modelMap) {
-        User user = userService.getById(userId);
-        modelMap.addAttribute("user", user);
-        return "updateUser";
-    }
-
-    @RequestMapping(value = "/updateUserPost", method = RequestMethod.POST)
-    public String updateUserPost(@ModelAttribute("user") User user) {
-        userService.update(user);
-        return "redirect:/users";
-    }
-
-    @RequestMapping(value = "/deleteUser/{userId}", method = RequestMethod.GET)
-    public String deleteUser(@PathVariable("userId") int userId) {
-        userService.deleteById(userId);
-        return "redirect:/users";
     }
 }

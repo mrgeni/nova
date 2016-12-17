@@ -1,6 +1,7 @@
 package com.nova.service;
 
 import com.nova.model.Dish;
+import com.nova.model.DishType;
 
 import java.util.List;
 
@@ -10,6 +11,8 @@ import java.util.List;
 public interface DishService {
 
     List<Dish> getMenu(int type);
+
+    List<DishType> getDishesByType();
 
     int updateRECOM(boolean RECOM, int id);
 
@@ -21,7 +24,7 @@ public interface DishService {
 
     int updatePrice(float price, int id);
 
-    int updateImg(String img,int id);
+    int updateImg(String img, int id);
 
     int updateOnoff(boolean onoff, int id);
 

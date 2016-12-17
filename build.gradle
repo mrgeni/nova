@@ -16,7 +16,7 @@ dependencies {
     compile(
             'com.alibaba:druid:1.0.16',
             'jstl:jstl:1.2',
-            'javax.servlet:servlet-api:2.5',
+            'javax.servlet:javax.servlet-api:3.1.0',
             'javax.servlet.jsp:jsp-api:2.2',
             'org.json:json:20151123',
             'mysql:mysql-connector-java:5.1.39',
